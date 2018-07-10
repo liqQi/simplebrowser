@@ -24,6 +24,7 @@ import org.greenrobot.eventbus.EventBus
  */
 
 private const val HOME_URL: String = "https://www.baidu.com/?tn=simple#"
+private const val USER_AGRNT:String="Mozilla/5.0 (Linux; Android 5.1.1; Nexus 5 Build/LMY48B; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/43.0.2357.65 Mobile Safari/537.36"
 
 class WebFragment : Fragment() {
 
@@ -38,9 +39,12 @@ class WebFragment : Fragment() {
         webView.webChromeClient = MyWebChromeClient()
         webView.webViewClient = MyWebViewClient()
         val settings = webView.settings
+        settings.userAgentString= USER_AGRNT
         settings.builtInZoomControls = true
+        settings.displayZoomControls = false
         settings.allowFileAccessFromFileURLs = true
         settings.loadWithOverviewMode = true
+        settings.useWideViewPort = true
         settings.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
         settings.allowUniversalAccessFromFileURLs = true
         settings.javaScriptEnabled = true
@@ -87,6 +91,7 @@ class WebFragment : Fragment() {
                 intent.data = Uri.parse(urlString)
                 val activity = context?.packageManager?.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY)
                 if (activity != null) {
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     startActivity(intent)
                     return true
                 }

@@ -1,7 +1,7 @@
 package com.honeybilly.cleanbrowser
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import com.honeybilly.cleanbrowser.eventbus.WebTitleChangeEvent
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
@@ -24,13 +24,14 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    @Suppress("unused")
     @Subscribe
     fun onTitleChange(title: WebTitleChangeEvent) {
         supportActionBar?.title = title.title
         supportActionBar?.subtitle = title.url
     }
 
-    fun generateFragmentTAG(): String {
+    private fun generateFragmentTAG(): String {
         val result = fragmentTagPrefix + fragmentIndex
         fragmentIndex++
         currentFocusFragmentTag = result
@@ -44,9 +45,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         val fragment = supportFragmentManager.findFragmentByTag(currentFocusFragmentTag)
-        if(fragment is WebFragment){
+        if (fragment is WebFragment) {
             val result = fragment.onBackPressed()
-            if(result){
+            if (result) {
                 return
             }
         }

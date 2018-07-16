@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.net.http.SslError
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -49,6 +50,8 @@ class WebFragment : Fragment() {
         settings.allowUniversalAccessFromFileURLs = true
         settings.javaScriptEnabled = true
         settings.javaScriptCanOpenWindowsAutomatically = false
+        settings.blockNetworkImage = false
+        settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
         webView.loadUrl(HOME_URL)
         progress.max = 100
     }

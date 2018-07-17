@@ -57,6 +57,10 @@ class WebViewFragment : Fragment() {
         return false
     }
 
+    fun initHomePage() {
+        webView.loadUrl(HOME_URL)
+    }
+
     companion object {
         fun newInstance():WebViewFragment{
             return WebViewFragment()

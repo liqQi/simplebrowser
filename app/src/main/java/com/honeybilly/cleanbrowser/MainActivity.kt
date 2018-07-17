@@ -1,9 +1,11 @@
 package com.honeybilly.cleanbrowser
 
+
 import android.os.Bundle
-
-
 import android.support.v7.app.AppCompatActivity
+import android.view.Gravity
+import android.view.MenuItem
+import android.widget.PopupMenu
 import android.widget.TextView
 import com.honeybilly.cleanbrowser.eventbus.ProgressEvent
 import com.honeybilly.cleanbrowser.eventbus.ProgressShowHideEvent
@@ -18,7 +20,7 @@ class MainActivity : AppCompatActivity() {
 
     private var index = 0
 
-    private var currentFocusFragmentTAG:String?= null
+    private var currentFocusFragmentTAG: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,8 +29,24 @@ class MainActivity : AppCompatActivity() {
         val transaction = supportFragmentManager.beginTransaction()
         val tag = generateFragmentTAG()
         currentFocusFragmentTAG = tag
-        transaction.add(R.id.container,WebViewFragment.newInstance(), tag)
+        transaction.add(R.id.container, WebViewFragment.newInstance(), tag)
         transaction.commit()
+        back.setOnClickListener { onBackPressed() }
+        more.setOnClickListener { v ->
+            run {
+                val popupMenu = PopupMenu(v.context, v, Gravity.BOTTOM)
+                popupMenu.inflate(R.menu.more)
+                popupMenu.setOnMenuItemClickListener { item: MenuItem? ->
+                    val itemId = item?.itemId
+                    when (itemId) {
+                        R.id.exit -> finish()
+                        R.id.backToHome ->findCurrentWebFragment()?.initHomePage()
+                    }
+                    return@setOnMenuItemClickListener true
+                }
+                popupMenu.show()
+            }
+        }
     }
 
     @Suppress("unused")
@@ -54,11 +72,17 @@ class MainActivity : AppCompatActivity() {
         EventBus.getDefault().unregister(this)
     }
 
-    override fun onBackPressed() {
+    private fun findCurrentWebFragment(): WebViewFragment? {
         val fragment = supportFragmentManager.findFragmentByTag(currentFocusFragmentTAG)
-        if(fragment is WebViewFragment){
-            val canGoBack = fragment.canGoBack()
-            if(canGoBack){
+        return fragment as? WebViewFragment
+
+    }
+
+    override fun onBackPressed() {
+        val findCurrentWebFragment = findCurrentWebFragment()
+        if (findCurrentWebFragment != null) {
+            val canGoBack = findCurrentWebFragment.canGoBack()
+            if (canGoBack) {
                 return
             }
         }
@@ -68,6 +92,6 @@ class MainActivity : AppCompatActivity() {
     private fun generateFragmentTAG(): String {
         val temp = index
         index++
-        return TAG_PREFIX+temp
+        return TAG_PREFIX + temp
     }
 }

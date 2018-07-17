@@ -2,4 +2,8 @@
     <string name="app_name">Clean Browser</string>
     <string name="back_btn">返回</string>
     <string name="more">更多</string>
+    <string name="exit">退出</string>
+    <string name="setting">设置</string>
+    <string name="back_to_home">回到主页</string>
+    <string name="favorite">收藏</string>
 </resources>

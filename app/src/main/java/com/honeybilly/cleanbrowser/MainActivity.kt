@@ -1,11 +1,14 @@
 package com.honeybilly.cleanbrowser
 
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.Gravity
-import android.view.MenuItem
-import android.widget.PopupMenu
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.widget.PopupWindow
 import android.widget.TextView
 import com.honeybilly.cleanbrowser.eventbus.ProgressEvent
 import com.honeybilly.cleanbrowser.eventbus.ProgressShowHideEvent
@@ -32,21 +35,32 @@ class MainActivity : AppCompatActivity() {
         transaction.add(R.id.container, WebViewFragment.newInstance(), tag)
         transaction.commit()
         back.setOnClickListener { onBackPressed() }
-        more.setOnClickListener { v ->
-            run {
-                val popupMenu = PopupMenu(v.context, v, Gravity.BOTTOM)
-                popupMenu.inflate(R.menu.more)
-                popupMenu.setOnMenuItemClickListener { item: MenuItem? ->
-                    val itemId = item?.itemId
-                    when (itemId) {
-                        R.id.exit -> finish()
-                        R.id.backToHome ->findCurrentWebFragment()?.initHomePage()
-                    }
-                    return@setOnMenuItemClickListener true
+        more.setOnClickListener { showMoreMenu() }
+    }
+
+    @SuppressLint("InflateParams")
+    private fun showMoreMenu() {
+        val popupWindow = PopupWindow(DimenUtils.dp2px(this, 120), ViewGroup.LayoutParams.WRAP_CONTENT)
+        val child = LayoutInflater.from(this).inflate(R.layout.more_popup_window, null)
+        val list = child.findViewById<RecyclerView>(R.id.list)
+        list.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        val moreMenuAdapter = MoreMenuAdapter()
+        list.adapter = moreMenuAdapter
+        moreMenuAdapter.setOnItemClickListener(object:MoreMenuAdapter.OnItemClickListener{
+            override fun onItemClick(menu: Menu) {
+                val iconId = menu.iconId
+                when(iconId){
+                    R.drawable.ic_home_black_24dp->findCurrentWebFragment()?.initHomePage()
+                    R.drawable.ic_close_black_24dp->finish()
                 }
-                popupMenu.show()
             }
-        }
+        })
+        moreMenuAdapter.setMenus(prepareMenus())
+        popupWindow.contentView = child
+        popupWindow.isFocusable = true
+        popupWindow.isOutsideTouchable = true
+        popupWindow.isTouchable = true
+        popupWindow.showAsDropDown(more)
     }
 
     @Suppress("unused")
@@ -94,4 +108,14 @@ class MainActivity : AppCompatActivity() {
         index++
         return TAG_PREFIX + temp
     }
+
+    private fun prepareMenus():ArrayList<Menu>{
+        val menus = ArrayList<Menu>()
+        menus.add(Menu("回到主页",R.drawable.ic_home_black_24dp))
+        menus.add(Menu("设置",R.drawable.ic_settings_black_24dp))
+        menus.add(Menu("收藏",R.drawable.ic_stars_black_24dp))
+        menus.add(Menu("退出",R.drawable.ic_close_black_24dp))
+        return menus
+    }
+
 }

@@ -20,9 +20,10 @@ class MoreMenuAdapter : RecyclerView.Adapter<MoreMenuAdapter.MoreMenuHolder>(), 
     }
 
     override fun onClick(v: View?) {
-        if(v?.tag is Menu){
+        val tag = v?.tag
+        if(tag is Menu){
             if(onItemClickListener!=null){
-                onItemClickListener!!.onItemClick(v.tag as Menu)
+                onItemClickListener!!.onItemClick(tag)
             }
         }
     }
@@ -70,7 +71,7 @@ class MoreMenuAdapter : RecyclerView.Adapter<MoreMenuAdapter.MoreMenuHolder>(), 
             drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
             tv.setCompoundDrawables(null, null,drawable, null)
             tv.text = menu.title
-            tv.tag = menu.iconId
+            tv.tag = menu
             tv.setOnClickListener(this)
         }
     }

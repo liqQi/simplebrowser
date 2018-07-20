@@ -2,9 +2,12 @@ package com.honeybilly.cleanbrowser
 
 
 import android.annotation.SuppressLint
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -43,23 +46,26 @@ class MainActivity : AppCompatActivity() {
         val popupWindow = PopupWindow(DimenUtils.dp2px(this, 120), ViewGroup.LayoutParams.WRAP_CONTENT)
         val child = LayoutInflater.from(this).inflate(R.layout.more_popup_window, null)
         val list = child.findViewById<RecyclerView>(R.id.list)
+        list.addItemDecoration(DividerItemDecoration(getColor(R.color.divider_gray), 1))
         list.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         val moreMenuAdapter = MoreMenuAdapter()
-        list.adapter = moreMenuAdapter
-        moreMenuAdapter.setOnItemClickListener(object:MoreMenuAdapter.OnItemClickListener{
+        moreMenuAdapter.setOnItemClickListener(object : MoreMenuAdapter.OnItemClickListener {
             override fun onItemClick(menu: Menu) {
                 val iconId = menu.iconId
-                when(iconId){
-                    R.drawable.ic_home_black_24dp->findCurrentWebFragment()?.initHomePage()
-                    R.drawable.ic_close_black_24dp->finish()
+                when (iconId) {
+                    R.drawable.ic_home_black_24dp -> findCurrentWebFragment()?.initHomePage()
+                    R.drawable.ic_close_black_24dp -> finish()
                 }
+                popupWindow.dismiss()
             }
         })
+        list.adapter = moreMenuAdapter
         moreMenuAdapter.setMenus(prepareMenus())
         popupWindow.contentView = child
         popupWindow.isFocusable = true
         popupWindow.isOutsideTouchable = true
-        popupWindow.isTouchable = true
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+        popupWindow.elevation = 4.0f
         popupWindow.showAsDropDown(more)
     }
 
@@ -109,12 +115,12 @@ class MainActivity : AppCompatActivity() {
         return TAG_PREFIX + temp
     }
 
-    private fun prepareMenus():ArrayList<Menu>{
+    private fun prepareMenus(): ArrayList<Menu> {
         val menus = ArrayList<Menu>()
-        menus.add(Menu("回到主页",R.drawable.ic_home_black_24dp))
-        menus.add(Menu("设置",R.drawable.ic_settings_black_24dp))
-        menus.add(Menu("收藏",R.drawable.ic_stars_black_24dp))
-        menus.add(Menu("退出",R.drawable.ic_close_black_24dp))
+        menus.add(Menu("回到主页", R.drawable.ic_home_black_24dp))
+        menus.add(Menu("设置", R.drawable.ic_settings_black_24dp))
+        menus.add(Menu("添加书签", R.drawable.ic_star_black_24dp))
+        menus.add(Menu("退出", R.drawable.ic_close_black_24dp))
         return menus
     }
 

@@ -1,4 +1,4 @@
-package com.honeybilly.cleanbrowser
+package com.honeybilly.cleanbrowser.view
 
 import android.content.Intent
 import android.content.pm.PackageManager

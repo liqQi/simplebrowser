@@ -1,4 +1,4 @@
-package com.honeybilly.cleanbrowser
+package com.honeybilly.cleanbrowser.view
 
 import android.graphics.Canvas
 import android.graphics.Paint

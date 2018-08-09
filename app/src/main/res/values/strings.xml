@@ -6,4 +6,13 @@
     <string name="setting">设置</string>
     <string name="back_to_home">回到主页</string>
     <string name="favorite">收藏</string>
+    <string name="title_activity_settings">设置</string>
+
+
+    <string name="summary_home_page">主页</string>
+    <string name="open_select_url">打开特定页面</string>
+    <string name="key_home_page">home_page</string>
+    <string name="key_home_page_url">home_page_url</string>
+    <string name="add_book_mark_success">添加书签成功</string>
+    <string name="input_url">输入网址</string>
 </resources>

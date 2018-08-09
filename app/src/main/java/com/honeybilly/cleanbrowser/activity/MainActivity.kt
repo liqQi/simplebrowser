@@ -1,26 +1,28 @@
-package com.honeybilly.cleanbrowser
+package com.honeybilly.cleanbrowser.activity
 
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.TextView
+import com.honeybilly.cleanbrowser.R
+import com.honeybilly.cleanbrowser.data.Menu
 import com.honeybilly.cleanbrowser.eventbus.ProgressEvent
 import com.honeybilly.cleanbrowser.eventbus.ProgressShowHideEvent
 import com.honeybilly.cleanbrowser.eventbus.WebTitleChangeEvent
+import com.honeybilly.cleanbrowser.utils.DimenUtils
+import com.honeybilly.cleanbrowser.view.DividerItemDecoration
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-
-private const val TAG_PREFIX = "webfragment"
 
 class MainActivity : AppCompatActivity() {
 
@@ -55,6 +57,8 @@ class MainActivity : AppCompatActivity() {
                 when (iconId) {
                     R.drawable.ic_home_black_24dp -> findCurrentWebFragment()?.initHomePage()
                     R.drawable.ic_close_black_24dp -> finish()
+                    R.drawable.ic_star_black_24dp -> addBookMark()
+                    R.drawable.ic_settings_black_24dp -> goSetting()
                 }
                 popupWindow.dismiss()
             }
@@ -67,6 +71,17 @@ class MainActivity : AppCompatActivity() {
         popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
         popupWindow.elevation = 4.0f
         popupWindow.showAsDropDown(more)
+    }
+
+    private fun goSetting() {
+        startActivity(Intent(this,SettingsActivity::class.java))
+    }
+
+    private fun addBookMark() {
+        val webFragment = findCurrentWebFragment()
+        if(webFragment is WebViewFragment){
+            webFragment.addBookMark()
+        }
     }
 
     @Suppress("unused")
@@ -122,6 +137,10 @@ class MainActivity : AppCompatActivity() {
         menus.add(Menu("添加书签", R.drawable.ic_star_black_24dp))
         menus.add(Menu("退出", R.drawable.ic_close_black_24dp))
         return menus
+    }
+
+    companion object {
+        private const val TAG_PREFIX = "webfragment"
     }
 
 }

@@ -1,4 +1,4 @@
-package com.honeybilly.cleanbrowser
+package com.honeybilly.cleanbrowser.utils
 
 import android.content.Context
 

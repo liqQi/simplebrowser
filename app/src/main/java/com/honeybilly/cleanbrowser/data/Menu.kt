@@ -1,4 +1,4 @@
-package com.honeybilly.cleanbrowser
+package com.honeybilly.cleanbrowser.data
 
 import android.support.annotation.DrawableRes
 

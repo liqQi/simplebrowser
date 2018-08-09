@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="@string/key_home_page"
+        android:summary="@string/summary_home_page"
+        android:title="@string/summary_home_page"
+        >
+        <EditTextPreference
+            android:dialogTitle="@string/input_url"
+            android:key="@string/key_home_page_url"
+            android:title="@string/open_select_url"
+            />
+    </PreferenceCategory>
+</PreferenceScreen>

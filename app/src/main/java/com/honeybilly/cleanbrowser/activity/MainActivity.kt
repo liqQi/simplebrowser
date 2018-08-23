@@ -41,6 +41,11 @@ class MainActivity : AppCompatActivity() {
         transaction.commit()
         back.setOnClickListener { onBackPressed() }
         more.setOnClickListener { showMoreMenu() }
+        clickLayer.setOnClickListener{ showInputUrlDialog()}
+    }
+
+    private fun showInputUrlDialog() {
+        InputUrlDialogFragment.newInstance().show(fragmentManager,TAG_INPUT_URL)
     }
 
     @SuppressLint("InflateParams")
@@ -141,6 +146,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG_PREFIX = "webfragment"
+        private const val TAG_INPUT_URL = "input_url"
     }
 
 }

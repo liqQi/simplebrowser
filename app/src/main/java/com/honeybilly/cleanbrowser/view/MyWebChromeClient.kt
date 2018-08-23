@@ -5,6 +5,7 @@ import android.util.Log
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import com.honeybilly.cleanbrowser.App
+import com.honeybilly.cleanbrowser.activity.WebViewFragment
 import com.honeybilly.cleanbrowser.data.FaviconFile
 import com.honeybilly.cleanbrowser.data.FaviconFileDao
 import com.honeybilly.cleanbrowser.data.WebHistory
@@ -33,6 +34,9 @@ class MyWebChromeClient : WebChromeClient() {
     override fun onReceivedTitle(view: WebView, title: String?) {
         super.onReceivedTitle(view, title)
         EventBus.getDefault().post(WebTitleChangeEvent(view.title, view.url))
+        if(view.url == WebViewFragment.HOME_URL){
+            return
+        }
         val webHistory = WebHistory()
         webHistory.dateTime = System.currentTimeMillis()
         webHistory.title = title

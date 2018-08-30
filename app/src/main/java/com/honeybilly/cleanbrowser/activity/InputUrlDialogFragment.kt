@@ -3,13 +3,20 @@ package com.honeybilly.cleanbrowser.activity
 import android.app.DialogFragment
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.text.Editable
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import com.honeybilly.cleanbrowser.App
 import com.honeybilly.cleanbrowser.R
+import com.honeybilly.cleanbrowser.data.WebHistory
 import com.honeybilly.cleanbrowser.data.WebHistoryDao
+import com.honeybilly.cleanbrowser.utils.OnItemClickListener
 import com.honeybilly.cleanbrowser.view.DividerItemDecoration
+import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.dialog_fragment_input_url.*
@@ -43,7 +50,24 @@ class InputUrlDialogFragment : DialogFragment() {
                 .throttleLast(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ t -> searchHistory(t) }, { t -> t.printStackTrace() })
+        RxView.clicks(go).throttleFirst(500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ _ -> performUrlGo(editText.text.toString()) }, { e -> e.printStackTrace() })
+        historyAdapter.setOnItemClickListener { t -> performUrlGo(t.url) }
+        editText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_GO) {
+                performUrlGo(editText.text.toString())
+                return@setOnEditorActionListener true
+            }
+            return@setOnEditorActionListener false
+        }
+    }
 
+    private fun performUrlGo(text: String?) {
+        if (context is MainActivity) {
+            (context as MainActivity).startNewPage(text)
+        }
+        dismiss()
     }
 
     private fun searchHistory(t: CharSequence?) {

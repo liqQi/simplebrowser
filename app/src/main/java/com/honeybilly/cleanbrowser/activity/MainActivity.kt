@@ -144,6 +144,10 @@ class MainActivity : AppCompatActivity() {
         return menus
     }
 
+    fun startNewPage(text: String?) {
+        findCurrentWebFragment()?.setUrl(text)
+    }
+
     companion object {
         private const val TAG_PREFIX = "webfragment"
         private const val TAG_INPUT_URL = "input_url"

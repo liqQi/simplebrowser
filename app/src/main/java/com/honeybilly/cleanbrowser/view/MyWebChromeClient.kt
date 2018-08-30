@@ -61,16 +61,21 @@ class MyWebChromeClient : WebChromeClient() {
         val queryRaw = faviconFileDao.queryRaw("where DOMAIN=?", domain)
         if (queryRaw != null && queryRaw.size == 1) return
         val fileName = MD5Utils.md5(domain)
-        val file = File(fileDir, fileName)
-        if (!file.exists()) {
-            file.parentFile.mkdirs()
-            file.createNewFile()
+        val file: File
+        try {
+            file = File(fileDir, fileName)
+            if (!file.exists()) {
+                file.parentFile.mkdirs()
+                file.createNewFile()
+            }
+            val fos = FileOutputStream(file)
+            icon.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+            fos.flush()
+            fos.close()
+        }catch (e:Exception){
+            e.printStackTrace()
+            return
         }
-        val fos = FileOutputStream(file)
-        fos.write(icon.rowBytes)
-        icon.compress(Bitmap.CompressFormat.JPEG, 100, fos)
-        fos.flush()
-        fos.close()
         val faviconFile = FaviconFile()
         faviconFile.domain = domain
         faviconFile.filePath = file.absolutePath
@@ -86,5 +91,4 @@ class MyWebChromeClient : WebChromeClient() {
     private fun getIconDir(): String {
         return File(App.instance.filesDir.absolutePath, "icon").absolutePath
     }
-
 }

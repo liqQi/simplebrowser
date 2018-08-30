@@ -9,6 +9,7 @@ import android.webkit.SslErrorHandler
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import com.honeybilly.cleanbrowser.eventbus.NewUrlEvent
 import com.honeybilly.cleanbrowser.eventbus.ProgressShowHideEvent
 import org.greenrobot.eventbus.EventBus
 
@@ -27,7 +28,8 @@ class MyWebViewClient : WebViewClient() {
         val url = request?.url
         val urlString = url.toString()
         if (urlString.startsWith("http")) {
-            return false
+            EventBus.getDefault().post(NewUrlEvent(urlString))
+            return true
         } else {
             val context = view?.context
             val intent = Intent(Intent.ACTION_VIEW)
@@ -41,6 +43,8 @@ class MyWebViewClient : WebViewClient() {
         }
         return super.shouldOverrideUrlLoading(view, request)
     }
+
+
 
     override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
         handler?.proceed()

@@ -1,8 +1,8 @@
 package com.honeybilly.cleanbrowser.activity
 
 import android.annotation.SuppressLint
+import android.app.Fragment
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +18,8 @@ import kotlinx.android.synthetic.main.fragment_webview.*
 
 class WebViewFragment : Fragment() {
 
+    lateinit var myWebChromeClient:MyWebChromeClient
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_webview, container, false)
     }
@@ -29,7 +31,8 @@ class WebViewFragment : Fragment() {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
-        webView.webChromeClient = MyWebChromeClient()
+        myWebChromeClient = MyWebChromeClient()
+        webView.webChromeClient = myWebChromeClient
         webView.webViewClient = MyWebViewClient()
         val settings = webView.settings
         settings.userAgentString = USER_AGENT_MOBILE
@@ -53,21 +56,13 @@ class WebViewFragment : Fragment() {
         settings.javaScriptCanOpenWindowsAutomatically = false
         settings.blockNetworkImage = false
         settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-        webView.loadUrl(HOME_URL)
-    }
-
-    fun canGoBack(): Boolean {
-        if (webView.canGoBack()) {
-            webView.goBack()
-            return true
+        val get = arguments?.getString(URL)
+        if(get !=null && !get.isEmpty()) {
+            webView.loadUrl(get)
+        }else{
+            webView.loadUrl(HOME_URL)
         }
-        return false
     }
-
-    fun initHomePage() {
-        webView.loadUrl(HOME_URL)
-    }
-
     fun addBookMark() {
         val bookMark = BookMark()
         bookMark.url = webView.url
@@ -76,6 +71,7 @@ class WebViewFragment : Fragment() {
         App.instance.getSession().bookMarkDao.insertOrReplace(bookMark)
         Toast.makeText(context, R.string.add_book_mark_success, Toast.LENGTH_SHORT).show()
     }
+
 
     fun setUrl(text: String?) {
         if (text != null) {
@@ -92,6 +88,17 @@ class WebViewFragment : Fragment() {
             return WebViewFragment()
         }
 
+        fun newInstance(url: String?): WebViewFragment {
+            if(url == null){
+                return newInstance()
+            }
+            val webViewFragment = WebViewFragment()
+            val bundle = Bundle()
+            bundle.putString(URL,url)
+            webViewFragment.arguments = bundle
+            return webViewFragment
+        }
+
         /**
          * Created by liqi on 17:18.
          *
@@ -103,5 +110,7 @@ class WebViewFragment : Fragment() {
         const val USER_AGENT_LAPTOP: String = "Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36"
         const val HTTP = "http://"
         const val HTTPS = "https://"
+
+        const val URL="url"
     }
 }

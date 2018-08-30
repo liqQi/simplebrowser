@@ -31,9 +31,14 @@ class MyWebChromeClient : WebChromeClient() {
     private val webHistoryDao: WebHistoryDao = App.instance.getSession().webHistoryDao
     private val faviconFileDao: FaviconFileDao = App.instance.getSession().faviconFileDao
 
+    var title:String? = null
+    var url:String? = null
+
     override fun onReceivedTitle(view: WebView, title: String?) {
         super.onReceivedTitle(view, title)
         EventBus.getDefault().post(WebTitleChangeEvent(view.title, view.url))
+        this.title = title
+        url = view.url
         if(view.url == WebViewFragment.HOME_URL){
             return
         }

@@ -2,6 +2,7 @@ package com.honeybilly.cleanbrowser.activity
 
 
 import android.annotation.SuppressLint
+import android.app.Fragment
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -9,18 +10,21 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.TextView
 import com.honeybilly.cleanbrowser.R
 import com.honeybilly.cleanbrowser.data.Menu
+import com.honeybilly.cleanbrowser.eventbus.NewUrlEvent
 import com.honeybilly.cleanbrowser.eventbus.ProgressEvent
 import com.honeybilly.cleanbrowser.eventbus.ProgressShowHideEvent
 import com.honeybilly.cleanbrowser.eventbus.WebTitleChangeEvent
 import com.honeybilly.cleanbrowser.utils.DimenUtils
 import com.honeybilly.cleanbrowser.view.DividerItemDecoration
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_webview.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
@@ -34,18 +38,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         EventBus.getDefault().register(this)
         setContentView(R.layout.activity_main)
-        val transaction = supportFragmentManager.beginTransaction()
+        val transaction = fragmentManager.beginTransaction()
         val tag = generateFragmentTAG()
         currentFocusFragmentTAG = tag
         transaction.add(R.id.container, WebViewFragment.newInstance(), tag)
+        transaction.addToBackStack(tag)
         transaction.commit()
         back.setOnClickListener { onBackPressed() }
         more.setOnClickListener { showMoreMenu() }
-        clickLayer.setOnClickListener{ showInputUrlDialog()}
+        clickLayer.setOnClickListener { showInputUrlDialog() }
     }
 
     private fun showInputUrlDialog() {
-        InputUrlDialogFragment.newInstance().show(fragmentManager,TAG_INPUT_URL)
+        InputUrlDialogFragment.newInstance().show(fragmentManager, TAG_INPUT_URL)
     }
 
     @SuppressLint("InflateParams")
@@ -60,7 +65,7 @@ class MainActivity : AppCompatActivity() {
             override fun onItemClick(menu: Menu) {
                 val iconId = menu.iconId
                 when (iconId) {
-                    R.drawable.ic_home_black_24dp -> findCurrentWebFragment()?.initHomePage()
+                    R.drawable.ic_home_black_24dp -> popTopFragment()
                     R.drawable.ic_close_black_24dp -> finish()
                     R.drawable.ic_star_black_24dp -> addBookMark()
                     R.drawable.ic_settings_black_24dp -> goSetting()
@@ -78,15 +83,31 @@ class MainActivity : AppCompatActivity() {
         popupWindow.showAsDropDown(more)
     }
 
+    private fun popTopFragment() {
+        val topFragmentTag = fragmentManager.getBackStackEntryAt(fragmentManager.backStackEntryCount - 1).name
+        val plus = TAG_PREFIX.plus(0)
+        if (topFragmentTag != plus) {
+            fragmentManager.popBackStackImmediate()
+            popTopFragment()
+        } else {
+            val fragment = fragmentManager.findFragmentByTag(topFragmentTag)
+            if (fragment is WebViewFragment) {
+                setUpTitleAndUrl(fragment)
+            }
+        }
+    }
+
+    private fun setUpTitleAndUrl(fragment: WebViewFragment?) {
+        findViewById<TextView>(R.id.title).text = fragment?.myWebChromeClient?.title
+        findViewById<TextView>(R.id.subtitle).text = fragment?.myWebChromeClient?.url
+    }
+
     private fun goSetting() {
-        startActivity(Intent(this,SettingsActivity::class.java))
+        startActivity(Intent(this, SettingsActivity::class.java))
     }
 
     private fun addBookMark() {
-        val webFragment = findCurrentWebFragment()
-        if(webFragment is WebViewFragment){
-            webFragment.addBookMark()
-        }
+        getTopStackFragment()?.addBookMark()
     }
 
     @Suppress("unused")
@@ -102,6 +123,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     @Subscribe
+    fun onNewUrlEvent(newUrlEvent: NewUrlEvent) {
+        val webViewFragment = WebViewFragment.newInstance(newUrlEvent.url)
+        val beginTransaction = fragmentManager.beginTransaction()
+        val tag = generateFragmentTAG()
+        beginTransaction.add(R.id.container, webViewFragment, tag)
+        beginTransaction.addToBackStack(tag)
+        beginTransaction.commitAllowingStateLoss()
+    }
+
+    @Subscribe
     fun onProgressChange(progressValue: ProgressEvent) {
         progress.progress = progressValue.progress
     }
@@ -112,21 +143,18 @@ class MainActivity : AppCompatActivity() {
         EventBus.getDefault().unregister(this)
     }
 
-    private fun findCurrentWebFragment(): WebViewFragment? {
-        val fragment = supportFragmentManager.findFragmentByTag(currentFocusFragmentTAG)
-        return fragment as? WebViewFragment
-
+    override fun onBackPressed() {
+        super.onBackPressed()
+        if(fragmentManager.backStackEntryCount!=0) {
+            setUpTitleAndUrl(getTopStackFragment())
+        }else{
+            finish()
+        }
     }
 
-    override fun onBackPressed() {
-        val findCurrentWebFragment = findCurrentWebFragment()
-        if (findCurrentWebFragment != null) {
-            val canGoBack = findCurrentWebFragment.canGoBack()
-            if (canGoBack) {
-                return
-            }
-        }
-        super.onBackPressed()
+    private fun getTopStackFragment(): WebViewFragment? {
+        val name = fragmentManager.getBackStackEntryAt(fragmentManager.backStackEntryCount - 1).name
+        return fragmentManager.findFragmentByTag(name) as WebViewFragment?
     }
 
     private fun generateFragmentTAG(): String {
@@ -145,7 +173,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun startNewPage(text: String?) {
-        findCurrentWebFragment()?.setUrl(text)
+        if (text != null) {
+            var url = text
+            if (!url.startsWith(WebViewFragment.HTTP) && !url.startsWith(WebViewFragment.HTTPS)) {
+                url = WebViewFragment.HTTP + url
+            }
+            onNewUrlEvent(NewUrlEvent(url))
+        }
     }
 
     companion object {

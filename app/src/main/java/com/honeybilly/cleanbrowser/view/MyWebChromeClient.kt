@@ -1,7 +1,6 @@
 package com.honeybilly.cleanbrowser.view
 
 import android.graphics.Bitmap
-import android.util.Log
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import com.honeybilly.cleanbrowser.App
@@ -10,7 +9,6 @@ import com.honeybilly.cleanbrowser.data.FaviconFile
 import com.honeybilly.cleanbrowser.data.FaviconFileDao
 import com.honeybilly.cleanbrowser.data.WebHistory
 import com.honeybilly.cleanbrowser.data.WebHistoryDao
-import com.honeybilly.cleanbrowser.eventbus.ProgressEvent
 import com.honeybilly.cleanbrowser.eventbus.WebTitleChangeEvent
 import com.honeybilly.cleanbrowser.utils.MD5Utils
 import com.honeybilly.cleanbrowser.utils.StringUtils
@@ -30,9 +28,14 @@ import java.io.FileOutputStream
 class MyWebChromeClient : WebChromeClient() {
     private val webHistoryDao: WebHistoryDao = App.instance.getSession().webHistoryDao
     private val faviconFileDao: FaviconFileDao = App.instance.getSession().faviconFileDao
+    private var onProgressListener: OnProgressListener? = null
 
     var title:String? = null
     var url:String? = null
+
+    fun setOnProgressListener(l : OnProgressListener){
+        onProgressListener = l
+    }
 
     override fun onReceivedTitle(view: WebView, title: String?) {
         super.onReceivedTitle(view, title)
@@ -90,10 +93,16 @@ class MyWebChromeClient : WebChromeClient() {
 
     override fun onProgressChanged(view: WebView?, newProgress: Int) {
         super.onProgressChanged(view, newProgress)
-        EventBus.getDefault().post(ProgressEvent(newProgress))
+//        EventBus.getDefault().post(ProgressEvent(newProgress))
+        onProgressListener?.onProgressChange(newProgress)
     }
 
     private fun getIconDir(): String {
         return File(App.instance.filesDir.absolutePath, "icon").absolutePath
     }
+
+    interface OnProgressListener{
+        fun onProgressChange(newProgress: Int)
+    }
+
 }

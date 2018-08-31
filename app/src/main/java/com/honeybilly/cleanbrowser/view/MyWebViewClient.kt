@@ -10,7 +10,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.honeybilly.cleanbrowser.eventbus.NewUrlEvent
-import com.honeybilly.cleanbrowser.eventbus.ProgressShowHideEvent
+import com.honeybilly.cleanbrowser.eventbus.WebTitleChangeEvent
 import org.greenrobot.eventbus.EventBus
 
 /**
@@ -19,9 +19,18 @@ import org.greenrobot.eventbus.EventBus
  *
  */
 class MyWebViewClient : WebViewClient() {
+
+    private var listener:OnPageChangeListener? = null
+
     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
-        EventBus.getDefault().post(ProgressShowHideEvent(true))
+//        EventBus.getDefault().post(ProgressShowHideEvent(true))
+        listener?.onPageStart()
+        EventBus.getDefault().post(WebTitleChangeEvent(view?.title,url))
+    }
+
+    fun setListener(onPageChangeListener: OnPageChangeListener){
+        this.listener = onPageChangeListener
     }
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
@@ -52,6 +61,12 @@ class MyWebViewClient : WebViewClient() {
 
     override fun onPageFinished(view: WebView?, url: String?) {
         super.onPageFinished(view, url)
-        EventBus.getDefault().post(ProgressShowHideEvent(false))
+//        EventBus.getDefault().post(ProgressShowHideEvent(false))
+        listener?.onPageFinish()
+    }
+
+    interface OnPageChangeListener{
+        fun onPageStart()
+        fun onPageFinish()
     }
 }

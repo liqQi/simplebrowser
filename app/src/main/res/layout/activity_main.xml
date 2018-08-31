@@ -82,12 +82,12 @@
             android:layout_height="0dp"/>
     </android.support.constraint.ConstraintLayout>
 
-    <ProgressBar
-        android:id="@+id/progress"
-        style="@android:style/Widget.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:progressDrawable="@drawable/loading_progress"/>
+    <!--<ProgressBar-->
+        <!--android:id="@+id/progress"-->
+        <!--style="@android:style/Widget.ProgressBar.Horizontal"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:progressDrawable="@drawable/loading_progress"/>-->
 
     <FrameLayout
         android:id="@+id/container"

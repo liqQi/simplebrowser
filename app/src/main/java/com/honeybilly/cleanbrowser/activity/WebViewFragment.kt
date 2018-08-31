@@ -9,16 +9,16 @@ import android.view.ViewGroup
 import android.webkit.WebSettings
 import android.widget.Toast
 import com.honeybilly.cleanbrowser.App
-import com.honeybilly.cleanbrowser.view.MyWebChromeClient
-import com.honeybilly.cleanbrowser.view.MyWebViewClient
 import com.honeybilly.cleanbrowser.R
 import com.honeybilly.cleanbrowser.data.BookMark
 import com.honeybilly.cleanbrowser.utils.isNetworkAvailable
+import com.honeybilly.cleanbrowser.view.MyWebChromeClient
+import com.honeybilly.cleanbrowser.view.MyWebViewClient
 import kotlinx.android.synthetic.main.fragment_webview.*
 
 class WebViewFragment : Fragment() {
 
-    lateinit var myWebChromeClient:MyWebChromeClient
+    lateinit var myWebChromeClient: MyWebChromeClient
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_webview, container, false)
@@ -32,8 +32,23 @@ class WebViewFragment : Fragment() {
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
         myWebChromeClient = MyWebChromeClient()
+        myWebChromeClient.setOnProgressListener(object : MyWebChromeClient.OnProgressListener {
+            override fun onProgressChange(newProgress: Int) {
+                progress.progress = newProgress
+            }
+        })
         webView.webChromeClient = myWebChromeClient
-        webView.webViewClient = MyWebViewClient()
+        val myWebViewClient = MyWebViewClient()
+        myWebViewClient.setListener(object :MyWebViewClient.OnPageChangeListener{
+            override fun onPageStart() {
+                progress.visibility = View.VISIBLE
+            }
+
+            override fun onPageFinish() {
+                progress.visibility = View.INVISIBLE
+            }
+        })
+        webView.webViewClient = myWebViewClient
         val settings = webView.settings
         settings.userAgentString = USER_AGENT_MOBILE
         settings.builtInZoomControls = true
@@ -57,12 +72,13 @@ class WebViewFragment : Fragment() {
         settings.blockNetworkImage = false
         settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
         val get = arguments?.getString(URL)
-        if(get !=null && !get.isEmpty()) {
+        if (get != null && !get.isEmpty()) {
             webView.loadUrl(get)
-        }else{
+        } else {
             webView.loadUrl(HOME_URL)
         }
     }
+
     fun addBookMark() {
         val bookMark = BookMark()
         bookMark.url = webView.url
@@ -89,12 +105,12 @@ class WebViewFragment : Fragment() {
         }
 
         fun newInstance(url: String?): WebViewFragment {
-            if(url == null){
+            if (url == null) {
                 return newInstance()
             }
             val webViewFragment = WebViewFragment()
             val bundle = Bundle()
-            bundle.putString(URL,url)
+            bundle.putString(URL, url)
             webViewFragment.arguments = bundle
             return webViewFragment
         }
@@ -111,6 +127,6 @@ class WebViewFragment : Fragment() {
         const val HTTP = "http://"
         const val HTTPS = "https://"
 
-        const val URL="url"
+        const val URL = "url"
     }
 }

@@ -2,7 +2,6 @@ package com.honeybilly.cleanbrowser.activity
 
 
 import android.annotation.SuppressLint
-import android.app.Fragment
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -10,7 +9,6 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupWindow
@@ -18,13 +16,10 @@ import android.widget.TextView
 import com.honeybilly.cleanbrowser.R
 import com.honeybilly.cleanbrowser.data.Menu
 import com.honeybilly.cleanbrowser.eventbus.NewUrlEvent
-import com.honeybilly.cleanbrowser.eventbus.ProgressEvent
-import com.honeybilly.cleanbrowser.eventbus.ProgressShowHideEvent
 import com.honeybilly.cleanbrowser.eventbus.WebTitleChangeEvent
 import com.honeybilly.cleanbrowser.utils.DimenUtils
 import com.honeybilly.cleanbrowser.view.DividerItemDecoration
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_webview.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
@@ -117,10 +112,10 @@ class MainActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.subtitle).text = titleEvent.url
     }
 
-    @Subscribe
-    fun onProgressShowHide(showHide: ProgressShowHideEvent) {
-        progress.progress = 0
-    }
+//    @Subscribe
+//    fun onProgressShowHide(showHide: ProgressShowHideEvent) {
+//        progress.progress = 0
+//    }
 
     @Subscribe
     fun onNewUrlEvent(newUrlEvent: NewUrlEvent) {
@@ -132,10 +127,10 @@ class MainActivity : AppCompatActivity() {
         beginTransaction.commitAllowingStateLoss()
     }
 
-    @Subscribe
-    fun onProgressChange(progressValue: ProgressEvent) {
-        progress.progress = progressValue.progress
-    }
+//    @Subscribe
+//    fun onProgressChange(progressValue: ProgressEvent) {
+//        progress.progress = progressValue.progress
+//    }
 
 
     override fun onDestroy() {

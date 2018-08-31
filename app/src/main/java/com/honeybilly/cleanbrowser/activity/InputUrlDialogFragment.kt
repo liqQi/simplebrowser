@@ -4,16 +4,15 @@ import android.app.DialogFragment
 import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.text.Editable
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import com.honeybilly.cleanbrowser.App
 import com.honeybilly.cleanbrowser.R
-import com.honeybilly.cleanbrowser.data.WebHistory
 import com.honeybilly.cleanbrowser.data.WebHistoryDao
-import com.honeybilly.cleanbrowser.utils.OnItemClickListener
 import com.honeybilly.cleanbrowser.view.DividerItemDecoration
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxTextView
@@ -69,7 +68,7 @@ class InputUrlDialogFragment : DialogFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
     }
 
     private fun performUrlGo(text: String?) {

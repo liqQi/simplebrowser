@@ -1,14 +1,13 @@
 package com.honeybilly.cleanbrowser.activity
 
 import android.app.DialogFragment
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.honeybilly.cleanbrowser.App
 import com.honeybilly.cleanbrowser.R
@@ -61,6 +60,16 @@ class InputUrlDialogFragment : DialogFragment() {
             }
             return@setOnEditorActionListener false
         }
+        editText.post {
+            val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.toggleSoftInputFromWindow(editText.windowToken,InputMethodManager.SHOW_IMPLICIT,InputMethodManager.HIDE_IMPLICIT_ONLY)
+            editText.requestFocusFromTouch()
+        }
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
     }
 
     private fun performUrlGo(text: String?) {

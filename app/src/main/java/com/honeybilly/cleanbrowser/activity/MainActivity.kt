@@ -2,28 +2,40 @@ package com.honeybilly.cleanbrowser.activity
 
 
 import android.annotation.SuppressLint
+import android.app.FragmentTransaction
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.transition.Transition
+import android.transition.TransitionInflater
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import android.widget.PopupWindow
 import android.widget.TextView
+import com.honeybilly.cleanbrowser.App
 import com.honeybilly.cleanbrowser.R
+import com.honeybilly.cleanbrowser.data.BookMark
+import com.honeybilly.cleanbrowser.data.FaviconFileDao
 import com.honeybilly.cleanbrowser.data.Menu
 import com.honeybilly.cleanbrowser.eventbus.NewUrlEvent
 import com.honeybilly.cleanbrowser.eventbus.WebTitleChangeEvent
 import com.honeybilly.cleanbrowser.utils.DimenUtils
+import com.honeybilly.cleanbrowser.utils.StringUtils
 import com.honeybilly.cleanbrowser.view.DividerItemDecoration
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import java.util.concurrent.TimeUnit
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private var index = 0
 
@@ -64,6 +76,7 @@ class MainActivity : AppCompatActivity() {
                     R.drawable.ic_close_black_24dp -> finish()
                     R.drawable.ic_star_black_24dp -> addBookMark()
                     R.drawable.ic_settings_black_24dp -> goSetting()
+                    R.drawable.ic_stars_black_24dp -> popupMyFavorite()
                 }
                 popupWindow.dismiss()
             }
@@ -76,6 +89,48 @@ class MainActivity : AppCompatActivity() {
         popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
         popupWindow.elevation = 4.0f
         popupWindow.showAsDropDown(more)
+    }
+
+    private fun popupMyFavorite() {
+        showProgress()
+        Observable.create<List<BookMark>> { source ->
+            val loadAll = App.instance.getSession().bookMarkDao.loadAll()
+            loadAll.map { bookMark ->
+                val domain = StringUtils.getDomain(bookMark.url)
+                val list = App.instance.getSession().faviconFileDao.queryBuilder().where(FaviconFileDao.Properties.Domain.eq(domain)).build().list()
+                if (!list.isEmpty()) {
+                    val faviconFile = list[0]
+                    bookMark.faviconFile = faviconFile
+                }
+            }
+            source.onNext(loadAll)
+            source.onComplete()
+        }.delay(500,TimeUnit.MILLISECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ bookMarks ->
+                    hideProgress()
+                    showBookMarks(bookMarks)
+                }, { e ->
+                    hideProgress()
+                    e.printStackTrace()
+                })
+
+    }
+
+    private fun showBookMarks(bookMarks: List<BookMark>?) {
+        val popupMenu = PopupMenu(this, more)
+        bookMarks?.forEach { bookMark ->
+            popupMenu.menu.add(android.view.Menu.NONE, bookMark._id.toInt(), android.view.Menu.NONE, bookMark.title)
+        }
+        popupMenu.setOnMenuItemClickListener { item: MenuItem? ->
+            val itemId = item?.itemId
+            val find = bookMarks?.find { bookMark -> itemId == bookMark._id.toInt() }
+            onNewUrlEvent(NewUrlEvent(find?.url))
+            popupMenu.dismiss()
+            return@setOnMenuItemClickListener true
+        }
+        popupMenu.show()
     }
 
     private fun popTopFragment() {
@@ -121,6 +176,7 @@ class MainActivity : AppCompatActivity() {
     fun onNewUrlEvent(newUrlEvent: NewUrlEvent) {
         val webViewFragment = WebViewFragment.newInstance(newUrlEvent.url)
         val beginTransaction = fragmentManager.beginTransaction()
+        beginTransaction.setCustomAnimations(R.animator.fragment_slide_in,R.animator.fragment_slide_out,R.animator.fragment_slide_in,R.animator.fragment_slide_out)
         val tag = generateFragmentTAG()
         beginTransaction.add(R.id.container, webViewFragment, tag)
         beginTransaction.addToBackStack(tag)
@@ -140,9 +196,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        if(fragmentManager.backStackEntryCount!=0) {
+        if (fragmentManager.backStackEntryCount != 0) {
             setUpTitleAndUrl(getTopStackFragment())
-        }else{
+        } else {
             finish()
         }
     }
@@ -161,6 +217,7 @@ class MainActivity : AppCompatActivity() {
     private fun prepareMenus(): ArrayList<Menu> {
         val menus = ArrayList<Menu>()
         menus.add(Menu("回到主页", R.drawable.ic_home_black_24dp))
+        menus.add(Menu("我的书签", R.drawable.ic_stars_black_24dp))
         menus.add(Menu("设置", R.drawable.ic_settings_black_24dp))
         menus.add(Menu("添加书签", R.drawable.ic_star_black_24dp))
         menus.add(Menu("退出", R.drawable.ic_close_black_24dp))

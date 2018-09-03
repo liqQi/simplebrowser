@@ -34,18 +34,18 @@ class WebViewFragment : Fragment() {
         myWebChromeClient = MyWebChromeClient()
         myWebChromeClient.setOnProgressListener(object : MyWebChromeClient.OnProgressListener {
             override fun onProgressChange(newProgress: Int) {
-                progress.progress = newProgress
+                progress?.progress = newProgress
             }
         })
         webView.webChromeClient = myWebChromeClient
         val myWebViewClient = MyWebViewClient()
         myWebViewClient.setListener(object :MyWebViewClient.OnPageChangeListener{
             override fun onPageStart() {
-                progress.visibility = View.VISIBLE
+                progress?.visibility = View.VISIBLE
             }
 
             override fun onPageFinish() {
-                progress.visibility = View.INVISIBLE
+                progress?.visibility = View.INVISIBLE
             }
         })
         webView.webViewClient = myWebViewClient

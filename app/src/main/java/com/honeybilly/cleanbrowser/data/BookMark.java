@@ -1,8 +1,9 @@
 package com.honeybilly.cleanbrowser.data;
 
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Transient;
 
 /**
  * Created by liqi on 9:33.
@@ -17,6 +18,9 @@ public class BookMark {
     private String url;
 
     private Long timeStamp;
+
+    @Transient
+    private FaviconFile faviconFile;
 
     @Generated(hash = 624069782)
     public BookMark(Long _id, String title, String url, Long timeStamp) {
@@ -60,5 +64,13 @@ public class BookMark {
 
     public void setTimeStamp(Long timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    public FaviconFile getFaviconFile() {
+        return faviconFile;
+    }
+
+    public void setFaviconFile(FaviconFile faviconFile) {
+        this.faviconFile = faviconFile;
     }
 }

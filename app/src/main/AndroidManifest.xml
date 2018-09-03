@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.SEND_SMS"/>
 
     <application
+        android:hardwareAccelerated="true"
         android:name=".App"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"

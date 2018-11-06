@@ -1,4 +1,4 @@
-package com.honeybilly.cleanbrowser.activity
+package com.honeybilly.cleanbrowser.activity.web
 
 import android.support.v7.widget.RecyclerView.Adapter
 import android.support.v7.widget.RecyclerView.ViewHolder
@@ -9,7 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.honeybilly.cleanbrowser.App
 import com.honeybilly.cleanbrowser.R
-import com.honeybilly.cleanbrowser.activity.HistoryAdapter.HistoryViewHolder
+import com.honeybilly.cleanbrowser.activity.web.HistoryAdapter.HistoryViewHolder
 import com.honeybilly.cleanbrowser.data.FaviconFileDao
 import com.honeybilly.cleanbrowser.data.WebHistory
 import com.honeybilly.cleanbrowser.utils.OnItemClickListener

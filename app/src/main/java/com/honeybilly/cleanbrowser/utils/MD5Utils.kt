@@ -1,6 +1,7 @@
 package com.honeybilly.cleanbrowser.utils
 
 import java.security.MessageDigest
+import java.util.*
 
 /**
  * Created by liqi on 14:36.
@@ -21,6 +22,12 @@ class MD5Utils {
                 sb.append(hexString)
             }
             return sb.toString().toUpperCase()
+        }
+
+        fun generateID():String{
+            val randomUUID = UUID.randomUUID()
+            println(randomUUID)
+            return md5(randomUUID.toString())
         }
     }
 }

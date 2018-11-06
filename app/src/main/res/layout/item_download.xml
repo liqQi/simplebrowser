@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="#22ffff00"
+    android:paddingBottom="4dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingTop="4dp">
+
+    <TextView
+        android:singleLine="true"
+        tools:text="我是很长很长的文件名我是很长很长的文件名我是很长很长的文件名"
+        style="@style/Content"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"/>
+</RelativeLayout>

@@ -1,8 +1,9 @@
-package com.honeybilly.cleanbrowser.activity
+package com.honeybilly.cleanbrowser.activity.setting
 
 import android.os.Bundle
 import android.preference.PreferenceFragment
 import com.honeybilly.cleanbrowser.R
+import com.honeybilly.cleanbrowser.activity.web.WebViewFragment
 
 /**
  * Created by liqi on 10:34.

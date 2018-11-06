@@ -7,7 +7,7 @@
     android:fitsSystemWindows="true"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activity.MainActivity">
+    tools:context=".activity.web.MainActivity">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"

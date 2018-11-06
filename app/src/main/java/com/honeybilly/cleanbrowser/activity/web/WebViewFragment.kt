@@ -1,4 +1,4 @@
-package com.honeybilly.cleanbrowser.activity
+package com.honeybilly.cleanbrowser.activity.web
 
 import android.annotation.SuppressLint
 import android.app.Fragment
@@ -49,6 +49,19 @@ class WebViewFragment : Fragment() {
             }
         })
         webView.webViewClient = myWebViewClient
+        webView.setDownloadListener { url, userAgent, contentDisposition, mimetype, contentLength ->
+//            val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+//            val request = DownloadManager.Request(Uri.parse(url))
+//            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
+//            request.setMimeType(mimetype)
+//            request.setAllowedOverMetered(true)
+//            request.setAllowedOverRoaming(false)
+//            request.setVisibleInDownloadsUi(false)
+//            val fileName = URLUtil.guessFileName(url, contentDisposition, mimetype)
+//            request.setDestinationInExternalFilesDir(context,Environment.DIRECTORY_DOWNLOADS,StringUtils.getDownloadDir().plus(fileName))
+//            val enqueue = downloadManager.enqueue(request)
+
+        }
         val settings = webView.settings
         settings.userAgentString = USER_AGENT_MOBILE
         settings.builtInZoomControls = true

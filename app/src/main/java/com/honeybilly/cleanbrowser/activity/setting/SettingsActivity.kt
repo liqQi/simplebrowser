@@ -1,4 +1,4 @@
-package com.honeybilly.cleanbrowser.activity
+package com.honeybilly.cleanbrowser.activity.setting
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity

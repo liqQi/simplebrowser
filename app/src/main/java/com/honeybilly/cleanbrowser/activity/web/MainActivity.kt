@@ -1,16 +1,13 @@
-package com.honeybilly.cleanbrowser.activity
+package com.honeybilly.cleanbrowser.activity.web
 
 
 import android.annotation.SuppressLint
-import android.app.FragmentTransaction
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.transition.Transition
-import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.ViewGroup
@@ -19,6 +16,8 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import com.honeybilly.cleanbrowser.App
 import com.honeybilly.cleanbrowser.R
+import com.honeybilly.cleanbrowser.activity.BaseActivity
+import com.honeybilly.cleanbrowser.activity.setting.SettingsActivity
 import com.honeybilly.cleanbrowser.data.BookMark
 import com.honeybilly.cleanbrowser.data.FaviconFileDao
 import com.honeybilly.cleanbrowser.data.Menu
@@ -232,6 +231,10 @@ class MainActivity : BaseActivity() {
             }
             onNewUrlEvent(NewUrlEvent(url))
         }
+    }
+
+    override fun shouldInterceptTitleChange(): Boolean {
+        return false
     }
 
     companion object {

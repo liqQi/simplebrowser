@@ -21,7 +21,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.web.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -30,9 +30,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.SettingsActivity"
+            android:name=".activity.setting.SettingsActivity"
             android:label="@string/title_activity_settings">
         </activity>
+        <activity android:name=".activity.download.DownloadActivity" android:label="@string/download"/>
     </application>
 
 </manifest>

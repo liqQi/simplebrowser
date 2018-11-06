@@ -1,4 +1,4 @@
-package com.honeybilly.cleanbrowser.activity
+package com.honeybilly.cleanbrowser.activity.web
 
 import android.support.v7.widget.RecyclerView
 import android.util.TypedValue

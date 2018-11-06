@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import com.honeybilly.cleanbrowser.App
-import com.honeybilly.cleanbrowser.activity.WebViewFragment
+import com.honeybilly.cleanbrowser.activity.web.WebViewFragment
 import com.honeybilly.cleanbrowser.data.FaviconFile
 import com.honeybilly.cleanbrowser.data.FaviconFileDao
 import com.honeybilly.cleanbrowser.data.WebHistory

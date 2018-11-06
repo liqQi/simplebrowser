@@ -1,4 +1,4 @@
-package com.honeybilly.cleanbrowser.activity
+package com.honeybilly.cleanbrowser.activity.web
 
 import android.app.DialogFragment
 import android.content.Context
